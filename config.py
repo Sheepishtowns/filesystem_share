@@ -1,28 +1,22 @@
 #remote directory access config
-port = 14389  #if invalid auto changes
+
+#set your access port
+port = 14389 
 
 #all directory and files to be accessed remotely
 #if you add files please notice file extension is needed (eg. .pdf .jpg)
-accessible_directories = {"public":
+
+accessible_directories = {"public":#public category
                               ["D:\yts\Pictures\Video Projects",
                                "D:\of mice and men.pdf"]
-                        , "private":
-                              ["D:\sheep"]
-                        , "protected":
+                        , "protected":#protected category
                               {"readonly":["D:\星战"],
-                               "useraccess":[["D:\Heaton","sheep"],#third parameter for readonly
-                                             ["D:\Heaton Application","sheep",True]]#user access should specify user for each
+                               "useraccess":[["D:\Heaton","sheep"],            #first parameter is path      
+                                             ["D:\Heaton Application","sheep"]]#user access should specify user for each(second parameter)
                                }
-                          } #public can be accessed by anyone, private can only be accessed with a password, protected means read only or accessed with specific username
+                          } #public can be accessed by anyone, protected means read only or accessed with specific username
 
-#password for private stuff (admin tools)
-key = "abcd"
 
-#black list ip(whole system)
-black_ip = []
-
-#white list ip(whole system)
-white_ip = []
 
 #users specify username and password
 users = {"sheep":"123"}

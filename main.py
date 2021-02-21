@@ -29,7 +29,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    if not session.get("logged_in") and not session.get("admin"):
+    if not session.get("logged_in"):
         return redirect("/login")
     else:
         return redirect("/filesystem")

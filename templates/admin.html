@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>filesystem</title>
+        <script src="/static/jquery-3.3.1.js"></script>
+        <style>
+            ul{
+                list-style-type: none;
+                overflow: auto;
+            }
+            li{
+                border:1px solid black;
+                width:200px;
+            }
+            #workspace{
+                width: auto;
+                height: 70vh;
+                margin-left: 300px;
+                border-left: 1px solid black;
+
+            }
+        </style>
+    </head>
+    <body>
+        <!-- nav bar -->
+        <ul>
+            <li><a href="#public">Manage public dir</a></li>
+            <li><a href="#protected">Manage protected dir</a></li>
+            <li><a href="#manage">manage users</a></li>
+            <li><a href="#temp">Add temporary access</a></li>
+            <li><a href="#ip">Manage ip address access</a></li>
+        </ul>
+        <!-- work window -->
+        <div id="workspace">
+            <!-- public dir -->
+            <div>
+                <form action="/admin" method="post" id="selector">
+                    <label for="path">Please enter a path for file or folder</label>
+                    <br>
+                    <input id="path" name="path" placeholder="Path"/>
+                    <input value="public" name="form-id" hidden>
+                    <button type="submit">Add</button>
+                    <p>
+                        {% with messages = get_flashed_messages(category_filter=["notice"]) %}
+                        {% if messages %}
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                    </p>
+                </form>
+                <br>
+                <label>Already added</label>
+                <ul>
+                    <!-- put in already added -->
+                    {% with messages = get_flashed_messages(category_filter=["public_list"]) %}
+                    {% if messages %}
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>

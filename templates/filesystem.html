@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>filesystem</title>
+    <script src="/static/jquery-3.3.1.js"></script>
+</head>
+<body>
+    <script>
+
+        const queryString = window.location.search;
+
+        if(queryString != ""){
+            const urlParams = new URLSearchParams(queryString);
+            if(urlParams.has('dir')){
+                //try to retrieve file
+                $.ajax({
+                    url: "/filesystem",
+                    type:"POST",
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    data:{"dir":urlParams.get('dir')},
+                    success: function(response){
+                        if(response == 404){
+                            window.location = "/filesystem";
+                        }
+                        try{
+                            var url = URL.createObjectURL(response);
+                        }catch(TypeError){
+                            //response not file data, retrieve directory
+                            $.ajax({
+                                url: "/filesystem?",
+                                type:"POST",
+                                data:{"dir":urlParams.get('dir')},
+                                success: function(response){
+                                    if(response == 404){
+                                        window.location = "/filesystem";
+                                    }
+                                    $("#back").attr("hidden", false);
+                                    $("#files").empty();
+                                    response = $.parseJSON(response);
+                                    response.forEach(item => {
+                                        $("#files").append("<li><a href='/filesystem?dir="+ urlParams.get("dir") + "\\" +
+                                         item + "'>" + item + "</a></li>");
+                                    });
+                                }
+                            });
+
+                            return;
+                        }
+                        var $a = $('<a />', {
+                          'href': url,
+                          'download': 'download',
+                          'text': "click"
+                        }).hide().appendTo("body")[0].click();
+                        window.URL.revokeObjectURL(url);
+
+                        //redirect user back to directory after download
+                        last_slash = urlParams.get('dir').lastIndexOf("\\");
+                        file_path_removed = urlParams.get('dir').substring(0, last_slash);
+                        window.location = "/filesystem?dir=" + file_path_removed;
+
+                    }
+                });
+            }
+        }else{
+                //only show back button when not at home
+                $("#back").attr("hidden", true);
+                $.ajax({
+                    url: "/filesystem",
+                    type:"POST",
+                    success: function(response){
+                        response = $.parseJSON(response);
+                        response.forEach(item => {
+                            $("#files").append("<li><a href='/filesystem?dir="+ item +"'>"+ item +"</a></li>");
+                        });
+                    }
+                });
+            }
+        function back(){
+            const urlParams = new URLSearchParams(queryString);
+            last_slash = urlParams.get('dir').lastIndexOf("\\");
+            path_removed = urlParams.get('dir').substring(0, last_slash);
+            window.location = "/filesystem?dir=" + path_removed;
+        }
+    </script>
+    <h2>Allowed Filesystem</h2>
+    <a href="javascript:back();" id="back" hidden>Back</a>
+    <a href="/filesystem">home</a>
+    <a href="/logout">Logout</a>
+    <ul id="files">
+
+    </ul>
+
+</body>
+</html>
